@@ -363,6 +363,9 @@ def build_batch_data_loader(
             num_workers=num_workers,
             collate_fn=operator.itemgetter(0),  # don't batch, but yield individual elements
             worker_init_fn=worker_init_reset_seed,
+            prefetch_factor=prefetch_factor if num_workers > 0 else None,
+            persistent_workers=persistent_workers,
+            pin_memory=pin_memory,
             generator=generator,
             **kwargs,
         )  # yield individual mapped dict
@@ -487,7 +490,7 @@ def _train_loader_from_config(cfg, mapper=None, *, dataset=None, sampler=None):
         else:
             logger.info("Using training sampler {}".format(sampler_name))
             if sampler_name == "TrainingSampler":
-                sampler = TrainingSampler(len(dataset))
+                sampler = TrainingSampler(len(dataset), seed=cfg.SEED)
             elif sampler_name == "RepeatFactorTrainingSampler":
                 repeat_factors = RepeatFactorTrainingSampler.repeat_factors_from_category_frequency(
                     dataset, cfg.DATALOADER.REPEAT_THRESHOLD, sqrt=cfg.DATALOADER.REPEAT_SQRT
