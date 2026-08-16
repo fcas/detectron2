@@ -211,7 +211,7 @@ setup(
             "isort==4.3.21",
             "flake8-bugbear",
             "flake8-comprehensions",
-            "black==22.3.0",
+            "black==26.3.1",
         ],
     },
     ext_modules=get_extensions(),
